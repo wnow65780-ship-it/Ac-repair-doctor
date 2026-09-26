@@ -14,9 +14,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Extract project
+      - name: Extract new project
         run: |
-          unzip -q AC_Repair_Doctor_V4_GitHub_Build.zip -d project
+          unzip -q "AC_Repair_Doctor_READY_TO_BUILD.zip" -d project
           cp -a project/. .
 
       - name: Set up Java
@@ -44,22 +44,6 @@ jobs:
           curl -L -o gradle.zip https://services.gradle.org/distributions/gradle-8.7-bin.zip
           unzip -q gradle.zip
           echo "$PWD/gradle-8.7/bin" >> "$GITHUB_PATH"
-
-      - name: Fix Kotlin duplicate classes
-        run: |
-          mkdir -p ~/.gradle/init.d
-          cat > ~/.gradle/init.d/force-kotlin.gradle <<'EOF'
-          allprojects {
-              configurations.all {
-                  resolutionStrategy.eachDependency {
-                      if (requested.group == "org.jetbrains.kotlin" &&
-                          requested.name.startsWith("kotlin-stdlib")) {
-                          useVersion "1.8.22"
-                      }
-                  }
-              }
-          }
-          EOF
 
       - name: Clean project
         run: |
