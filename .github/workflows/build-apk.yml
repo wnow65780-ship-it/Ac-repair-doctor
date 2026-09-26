@@ -1,9 +1,7 @@
- name: Build APK
+name: Build APK
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ "main" ]
 
 jobs:
   build:
@@ -13,19 +11,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Extract Android Project
+      - name: Extract project
         run: |
-          mkdir extracted
-          unzip -q AC_Repair_Doctor_V4_GitHub_Build.zip -d extracted
-          cp -a extracted/. .
+          unzip -q AC_Repair_Doctor_V4_GitHub_Build.zip -d project
+          cp -a project/. .
 
-      - name: Set up JDK 17
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
+      - name: Set up Android
         uses: android-actions/setup-android@v3
 
       - name: Install Android SDK
@@ -34,12 +31,12 @@ jobs:
 
       - name: Install Gradle
         run: |
-          curl -L -o gradle.zip https://services.gradle.org/distributions/gradle-8.7-bin.zip
-          unzip -q gradle.zip
+          wget -q https://services.gradle.org/distributions/gradle-8.7-bin.zip
+          unzip -q gradle-8.7-bin.zip
           echo "$PWD/gradle-8.7/bin" >> $GITHUB_PATH
 
       - name: Build APK
-        run: gradle --no-daemon assembleDebug
+        run: gradle assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
